@@ -5,6 +5,8 @@ import numpy as np
 
 from dataset_generator import generate_perturbed_models
 from gnn_validator import ZeroCostGNNValidator
+from visualization import plot_scatter, plot_ranking
+from feature_importance import extract_feature_importance
 
 def train():
     print("1. Generating Perturbation Graph Dataset...")
@@ -52,10 +54,21 @@ def train():
     print(f"Test MSE:           {mse:.4f}")
     print(f"Spearman Corr (ρ):  {spearman_rho:.4f}")
     
-    # --- NEW: VISUALIZATION STEP ---
     print("\n5. Generating Plots...")
     plot_scatter(preds, trues, title="Predicted vs True Accuracy", filename="figure_scatter.pdf")
     plot_ranking(preds, trues, title="Model Ranking Correlation", filename="figure_ranking.pdf")
+    
+    feature_names = [
+        "Layer Type: Linear", 
+        "Layer Type: Conv", 
+        "Layer Type: RNN", 
+        "Layer Type: Other", 
+        "Weight Mean", 
+        "Weight Variance", 
+        "Sparsity (Pruning Level)"
+    ]
+    
+    extract_feature_importance(model, test_loader, feature_names)
 
 if __name__ == "__main__":
     train()
